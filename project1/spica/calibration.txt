@@ -1,0 +1,2 @@
+zero pos: 37.875497135049145, -122.25887204570894
+inertial navigation: online. datalinks: online. thrusters: [5/5] online.

